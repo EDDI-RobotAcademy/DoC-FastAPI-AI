@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from async_db.database import getMySqlPool, createTableIfNeccessary
+from data_analysis.controller.kmeans_controller import kmeansRouter
 
 app = FastAPI()
 
@@ -32,7 +33,7 @@ async def lifespan(app: FastAPI):
     app.state.dbPool.close()
     await app.state.dbPool.wait_closed()
 
-
+app.include_router(kmeansRouter)
 load_dotenv()
 
 origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
@@ -49,5 +50,6 @@ app.add_middleware(
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="192.168.0.24", port=33333)
+
     # 위에 각자 ip 주소로 변환해서 사용
 
