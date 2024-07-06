@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from async_db.database import getMySqlPool, createTableIfNeccessary
-from data_analysis.controller.kmeans_controller import kmeansRouter
+from data_analysis.controller.data_analysis_controller import analysisRouter
 
 app = FastAPI()
 
@@ -33,7 +33,8 @@ async def lifespan(app: FastAPI):
     app.state.dbPool.close()
     await app.state.dbPool.wait_closed()
 
-app.include_router(kmeansRouter)
+app.include_router(analysisRouter)
+
 load_dotenv()
 
 origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
