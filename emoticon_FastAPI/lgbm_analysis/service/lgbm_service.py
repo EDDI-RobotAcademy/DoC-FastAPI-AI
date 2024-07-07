@@ -9,3 +9,10 @@ class LgbmAnalysisService(ABC):
     @abstractmethod
     def lgbmTrain(self):
         pass
+
+    @abstractmethod
+    def lgbmPredict(self, age, gender):
+        pass
+    @abstractmethod
+    def getRecommendProducts(self, category, k):
+        pass

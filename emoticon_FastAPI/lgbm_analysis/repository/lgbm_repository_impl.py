@@ -110,3 +110,35 @@ class LgbmAnalysisRepositoryImpl(LgbmAnalysisRepository):
         y_pred = model.predict(X_test)
         acc = accuracy_score(y_test, y_pred)
         print('accuracy: {:.4f}'.format(acc))
+
+    async def predictModel(self, trainedModel, X, top_k=30):
+        prediction = trainedModel.predict(X).flatten()[0]
+        # 예측 결과의 상위 k개 클래스
+        # top_classes = np.argsort(prediction[0])[::-1][:top_k]
+        print('prediction : ', prediction)
+        # 예측 결과 클래스들을 상품명으로 변환하여 반환
+        # predicted_products = [label_encoder_product.inverse_transform([cls])[0] for cls in top_classes]
+        return self.CLASSES[prediction]
+
+    def getProductOfCategory(self, category, k=5):
+        load_dotenv()
+        # 환경 변수 가져오기
+        MYSQL_HOST = os.getenv('MYSQL_HOST')
+        MYSQL_PORT = os.getenv('MYSQL_PORT')
+        MYSQL_USER = os.getenv('MYSQL_USER')
+        MYSQL_PASSWORD = quote_plus(os.getenv('MYSQL_PASSWORD'))
+        MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
+
+        # SQLAlchemy 엔진 생성
+        engine = create_engine(
+            f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}")
+        query_product = "SELECT productId as 'product_id', productCategory as 'target' FROM product"
+        df_product = pd.read_sql(query_product, engine)
+        category_product = df_product[df_product['target'] == category]
+        product_names = category_product['product_id'].tolist()
+
+        selected_product_ids = random.sample(product_names, k=min(k, len(product_names)))
+        print('selected_product_ids: ', selected_product_ids)
+
+        return selected_product_ids
+

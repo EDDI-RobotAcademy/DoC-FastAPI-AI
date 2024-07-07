@@ -24,3 +24,14 @@ async def lgbmTrain(lgbmAnalysisService: LgbmAnalysisServiceImpl =
 
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@lgbmAnalysisRouter.post("/lgbm-predict")
+async def lgbmPredict(request: PredictRequestForm,
+                        lgbmAnalysisService: LgbmAnalysisServiceImpl =
+                        Depends(injectlgbmAnalysisService)):
+
+    print(f"controller -> lgbmPredict()")
+    predictedCategory = await lgbmAnalysisService.lgbmPredict(age=request.age, gender=request.gender)
+    recommendIds = lgbmAnalysisService.getRecommendProducts(category=predictedCategory, k=5)
+
+    return JSONResponse(content={"prediction": predictedCategory, "recommended IDs": recommendIds}, status_code=status.HTTP_200_OK)

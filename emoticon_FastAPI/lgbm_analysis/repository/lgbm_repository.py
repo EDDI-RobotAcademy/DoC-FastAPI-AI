@@ -37,5 +37,12 @@ class LgbmAnalysisRepository(ABC):
     def getAccuracy(self, model, X_test, y_test):
         pass
 
+    @abstractmethod
+    def predictModel(self, trainedModel, X, top_k):
+        pass
+    @abstractmethod
+    def getProductOfCategory(self, category, k):
+        pass
+
 
 

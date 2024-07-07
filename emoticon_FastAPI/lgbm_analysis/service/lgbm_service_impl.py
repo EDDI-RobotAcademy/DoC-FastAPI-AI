@@ -31,3 +31,16 @@ class LgbmAnalysisServiceImpl(LgbmAnalysisService):
         await self.__lgbmAnalysisRepository.getAccuracy(trainedModel,  X_test, y_test)
 
         return True
+
+    async def lgbmPredict(self, age, gender):
+        loaded_model = self.__lgbmAnalysisRepository.loadModel(self.SAVED_MODEL_PATH)
+        X_new = pd.DataFrame({'age': [age], 'gender': [gender]})
+        encoded_X = self.__lgbmAnalysisRepository.featureEncoding(X_new, forTrain=False)
+        scaled_X = self.__lgbmAnalysisRepository.featureScale(encoded_X)
+        predicted_class = await self.__lgbmAnalysisRepository.predictModel(loaded_model, scaled_X, 3)
+        print('prediction: ', predicted_class)
+        return predicted_class
+
+
+    def getRecommendProducts(self, category, k):
+        return self.__lgbmAnalysisRepository.getProductOfCategory(category, k=5)
