@@ -8,5 +8,5 @@ class AnalysisService(ABC):
         pass
 
     @abstractmethod
-    def predict(self, model):
+    def predict(self, age,gender):
         pass
