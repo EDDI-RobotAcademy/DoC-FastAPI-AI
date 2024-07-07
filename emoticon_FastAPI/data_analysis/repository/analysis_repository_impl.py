@@ -19,6 +19,7 @@ class AnalysisRepositoryImpl(AnalysisRepository):
     def __init__(self):
         self.label_encoder_age_group = LabelEncoder()
         self.label_encoder_gender = LabelEncoder()
+        self.label_encoder_productId = LabelEncoder()
 
     async def readData(self):
         conn = mysql.connector.connect(**config)
@@ -56,6 +57,8 @@ class AnalysisRepositoryImpl(AnalysisRepository):
                 data[column] = self.label_encoder_age_group.fit_transform(data[column])
             elif column == 'gender':
                 data[column] = self.label_encoder_gender.fit_transform(data[column])
+            elif column == 'product_id':
+                data[column] = self.label_encoder_productId.fit_transform(data[column])
         X = ['age_group', 'gender']
         y = 'product_id'
         return data[X], data[y]
@@ -71,7 +74,7 @@ class AnalysisRepositoryImpl(AnalysisRepository):
             'is_unbalance': True,
             'boosting_type': 'gbdt',
             'num_leaves': 31,
-            'learning_rate': 0.05,
+            'learning_rate': 0.01,
             'feature_fraction': 0.9
         }
 
@@ -80,15 +83,15 @@ class AnalysisRepositoryImpl(AnalysisRepository):
 
 
     def predict(self, age_group, gender, model):
-        input_data = pd.DataFrame({'age_group': [age_group], 'gender': [gender]})
-        input_data['age_group'] = self.label_encoder_age_group.fit_transform(input_data['age_group'])
-        input_data['gender'] = self.label_encoder_gender.fit_transform(input_data['gender'])
-        if model != None:
-            middle_result = model.predict(input_data)
-            result = np.argsort(middle_result[0])[::-1][:5]
-            product_names = [self.label_encoder_age_group.inverse_transform([cls])[0] for cls in result]
-            print(product_names)
-            return product_names
-
-        print('학습을 먼저 진행해주세요.')
-        return None
+        try:
+            input_data = pd.DataFrame({'age_group': [age_group], 'gender': [gender]})
+            input_data['age_group'] = self.label_encoder_age_group.fit_transform(input_data['age_group'])
+            input_data['gender'] = self.label_encoder_gender.fit_transform(input_data['gender'])
+            if model != None:
+                middle_result = model.predict(input_data)
+                result = np.argsort(middle_result[0])[::-1][:5]
+                product_names = [self.label_encoder_productId.inverse_transform([cls])[0] for cls in result]
+                return product_names
+                print(product_names)
+        except Exception as e:
+            print(f'오류발생: {e}')

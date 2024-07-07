@@ -18,9 +18,10 @@ class AnalysisServiceImpl(AnalysisService):
         x,y = self.__AnalysisRepository.encoding(transData,self.dataCol)
         trainData = self.__AnalysisRepository.dataSetting(x,y)
         model = self.__AnalysisRepository.trainModel(y,trainData)
+        self.model = model
+        return model
 
-    async def predict(self, model):
-        age = "20대"
-        gender = "여성"
-        predict = self.__AnalysisRepository.predict(age, gender, model)
+    async def predict(self,age,gender):
+        predict = self.__AnalysisRepository.predict(age, gender, self.model)
+
         return predict
