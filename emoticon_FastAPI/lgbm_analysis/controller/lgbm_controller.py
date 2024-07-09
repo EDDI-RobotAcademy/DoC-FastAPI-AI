@@ -31,7 +31,8 @@ async def lgbmPredict(request: PredictRequestForm,
                         Depends(injectlgbmAnalysisService)):
 
     print(f"controller -> lgbmPredict()")
-    predictedCategory = await lgbmAnalysisService.lgbmPredict(age=request.age, gender=request.gender)
+    predictedCategory, probability = await lgbmAnalysisService.lgbmPredict(age=request.age, gender=request.gender)
+    probability = probability.tolist()
     recommendIds = lgbmAnalysisService.getRecommendProducts(category=predictedCategory, k=5)
 
-    return JSONResponse(content={"prediction": predictedCategory, "recommended IDs": recommendIds}, status_code=status.HTTP_200_OK)
+    return JSONResponse(content={"prediction": predictedCategory, 'probability': probability, "recommended IDs": recommendIds}, status_code=status.HTTP_200_OK)
