@@ -9,7 +9,8 @@ lgbmAnalysisRouter = APIRouter()
 
 
 async def injectlgbmAnalysisService() -> LgbmAnalysisServiceImpl:
-    return LgbmAnalysisServiceImpl()
+    result = LgbmAnalysisServiceImpl()
+    return result
 
 
 @lgbmAnalysisRouter.get("/lgbm-train")
@@ -33,6 +34,6 @@ async def lgbmPredict(request: PredictRequestForm,
     print(f"controller -> lgbmPredict()")
     predictedCategory, probability = await lgbmAnalysisService.lgbmPredict(age=request.age, gender=request.gender)
     probability = probability.tolist()
-    recommendIds = lgbmAnalysisService.getRecommendProducts(category=predictedCategory, k=5)
+    recommendIds = lgbmAnalysisService.getRecommendProducts(category=predictedCategory, k=4)
 
     return JSONResponse(content={"prediction": predictedCategory, 'probability': probability, "recommended IDs": recommendIds}, status_code=status.HTTP_200_OK)
