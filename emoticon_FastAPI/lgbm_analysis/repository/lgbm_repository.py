@@ -13,13 +13,15 @@ class LgbmAnalysisRepository(ABC):
     @abstractmethod
     def splitFeatureTarget(self, dataFrame):
         pass
-
     @abstractmethod
     def featureScale(self, X):
         pass # scaled_X
 
     @abstractmethod
     def trainTestSplit(self, X, y):
+        pass
+    @abstractmethod
+    def smote(self, X_train, y_train):
         pass
 
     @abstractmethod
@@ -34,7 +36,7 @@ class LgbmAnalysisRepository(ABC):
         pass
 
     @abstractmethod
-    def getAccuracy(self, model, X_test, y_test):
+    def getScore(self, model, X_test, y_test):
         pass
 
     @abstractmethod
