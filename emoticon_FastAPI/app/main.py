@@ -49,7 +49,6 @@ app.add_middleware(
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="192.168.0.52", port=33333) #192.168.0.24 #26
+    uvicorn.run(app, host="192.168.0.24", port=33333) #192.168.0.24
 
     # 위에 각자 ip 주소로 변환해서 사용
-

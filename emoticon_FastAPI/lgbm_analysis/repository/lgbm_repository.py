@@ -28,6 +28,9 @@ class LgbmAnalysisRepository(ABC):
     def selectLGBMmodel(self, num_classes):
         pass
     @abstractmethod
+    def saveSplitDataFrame(self, encoded_df):
+        pass
+    @abstractmethod
     def trainModel(self, model, X_train, y_train):
         pass
 
@@ -40,7 +43,7 @@ class LgbmAnalysisRepository(ABC):
         pass
 
     @abstractmethod
-    def predictModel(self, trainedModel, X, top_k):
+    def predictModel(self, trainedModel, X):
         pass
     @abstractmethod
     def getProductOfCategory(self, category, k):
