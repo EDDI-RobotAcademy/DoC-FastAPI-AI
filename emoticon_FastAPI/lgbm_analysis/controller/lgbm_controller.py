@@ -36,4 +36,4 @@ async def lgbmPredict(request: PredictRequestForm,
     probability = probability.tolist()
     recommendIds = lgbmAnalysisService.getRecommendProducts(category=predictedCategory, k=4)
 
-    return JSONResponse(content={"prediction": predictedCategory, 'probability': probability, "recommended IDs": recommendIds}, status_code=status.HTTP_200_OK)
+    return JSONResponse(content={"prediction": predictedCategory, 'probability': probability, "recommendProductIdList": recommendIds}, status_code=status.HTTP_200_OK)
