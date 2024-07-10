@@ -30,7 +30,6 @@ class LgbmAnalysisServiceImpl(LgbmAnalysisService):
                 num_classes = len(np.unique(y))
                 X_scaled = self.__lgbmAnalysisRepository.featureScale(X)
                 X_train, X_test, y_train, y_test = self.__lgbmAnalysisRepository.trainTestSplit(X_scaled, y)
-                if age_group != 99:
 
                 if filtered_df.shape[0] < 100:
                     X_train_smote, y_train_smote = X_train, y_train
