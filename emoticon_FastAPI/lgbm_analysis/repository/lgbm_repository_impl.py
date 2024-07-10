@@ -160,22 +160,58 @@ class LgbmAnalysisRepositoryImpl(LgbmAnalysisRepository):
 
         engine = create_engine(
             f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}")
+        query_report = "select age,gender, account_id from report"
+        query_orders = "select id as orders_id,account_id from orders"
         query_product = "SELECT productId as 'product_id', productCategory as 'target' FROM product"
         query_orders_item = "SELECT orders_id, product_id FROM orders_item"
         df_product = pd.read_sql(query_product, engine)
         df_orders_item = pd.read_sql(query_orders_item, engine) # orders_id를 기준으로 prdocut_id count
+        df_report = pd.read_sql(query_report, engine)
+        df_orders = pd.read_sql(query_orders, engine)  # orders_id를 기준으로 prdocut_id count
+
 
         orders_df = df_orders_item.groupby(['product_id'])[['orders_id']].count().reset_index()
         orders_df = orders_df.rename(columns={'orders_id': 'cnt'})
-        orders_df = orders_df.sort_values(by='cnt', ascending=False)
-        print(orders_df)
+        orders_df = orders_df.sort_values(by='cnt', ascending=False).reset_index(drop=True)
+        # print(orders_df)
 
         category_product = df_product[df_product['target'] == category]
+        d1 = category_product.merge(df_orders_item,on='product_id',how='inner')
+        # print(1111,d1)
         product_names = category_product.merge(orders_df, on='product_id', how='inner')
+        # print(product_names)
         product_names = product_names[['product_id', 'cnt']]
         product_names = product_names.sort_values(by='cnt', ascending=False)['product_id'].tolist()
+
 
         selected_product_ids = product_names[:min(k, len(product_names))]
         print('selected_product_ids: ', selected_product_ids)
 
         return selected_product_ids
+
+    def getProductData(self):
+        load_dotenv()
+        MYSQL_HOST = os.getenv('MYSQL_HOST')
+        MYSQL_PORT = os.getenv('MYSQL_PORT')
+        MYSQL_USER = os.getenv('MYSQL_USER')
+        MYSQL_PASSWORD = quote_plus(os.getenv('MYSQL_PASSWORD'))
+        MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
+
+        engine = create_engine(
+            f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}")
+        query_report = "select age,gender, account_id from report"
+        query_orders = "select id as 'orders_id',account_id from orders"
+        query_product = "SELECT productId as 'product_id', productCategory as 'target' FROM product"
+        query_orders_item = "SELECT orders_id, product_id FROM orders_item"
+        df_product = pd.read_sql(query_product, engine)
+        df_orders_item = pd.read_sql(query_orders_item, engine)  # orders_id를 기준으로 prdocut_id count
+        df_report = pd.read_sql(query_report, engine)
+        df_orders = pd.read_sql(query_orders, engine)
+
+        profile = df_report.merge(df_orders, on='account_id', how='inner')
+        df_orders_item = df_orders_item.merge(profile, on="orders_id", how='inner')
+
+        # category_product = df_product[df_product['target'] == category]
+        d1 = df_product.merge(df_orders_item, on='product_id', how='inner')
+        d2 = d1[['age', 'target', 'gender']]
+        return d2

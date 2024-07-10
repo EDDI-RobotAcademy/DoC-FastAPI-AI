@@ -57,3 +57,6 @@ class LgbmAnalysisServiceImpl(LgbmAnalysisService):
 
     def getRecommendProducts(self, category, k):
         return self.__lgbmAnalysisRepository.getProductOfCategory(category, k)
+
+    def getVisualData(self):
+        return self.__lgbmAnalysisRepository.getProductData()

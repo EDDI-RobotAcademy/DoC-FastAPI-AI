@@ -16,3 +16,7 @@ class LgbmAnalysisService(ABC):
     @abstractmethod
     def getRecommendProducts(self, category, k):
         pass
+
+    @abstractmethod
+    def getVisualData(self):
+        pass

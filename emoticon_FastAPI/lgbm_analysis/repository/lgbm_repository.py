@@ -48,6 +48,8 @@ class LgbmAnalysisRepository(ABC):
     @abstractmethod
     def getProductOfCategory(self, category, k):
         pass
-
+    @abstractmethod
+    def getProductData(self):
+        pass
 
 
