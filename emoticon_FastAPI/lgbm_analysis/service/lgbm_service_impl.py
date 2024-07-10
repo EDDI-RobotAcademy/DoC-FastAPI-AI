@@ -31,9 +31,16 @@ class LgbmAnalysisServiceImpl(LgbmAnalysisService):
                 X_scaled = self.__lgbmAnalysisRepository.featureScale(X)
                 X_train, X_test, y_train, y_test = self.__lgbmAnalysisRepository.trainTestSplit(X_scaled, y)
                 if age_group != 99:
+
+                if filtered_df.shape[0] < 100:
+                    X_train_smote, y_train_smote = X_train, y_train
+
+                elif filtered_df['target'].nunique() == 3:
                     X_train_smote, y_train_smote = self.__lgbmAnalysisRepository.smote(X_train, y_train)
+
                 else:
                     X_train_smote, y_train_smote = X_train, y_train
+
                 selectedModel = await self.__lgbmAnalysisRepository.selectLGBMmodel(num_classes)
                 trainedModel = await self.__lgbmAnalysisRepository.trainModel(selectedModel, X_train_smote, y_train_smote)
                 model_path = self.SAVED_MODEL_PATH.format(age_group=age_group, gender=gender)
