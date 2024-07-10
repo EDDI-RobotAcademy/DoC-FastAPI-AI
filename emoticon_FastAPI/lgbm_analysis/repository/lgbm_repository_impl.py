@@ -1,5 +1,6 @@
 import os
 import random
+from collections import Counter
 
 import joblib
 import optuna
@@ -95,7 +96,11 @@ class LgbmAnalysisRepositoryImpl(LgbmAnalysisRepository):
         return train_test_split(X, y, test_size=0.2, random_state=42)
 
     def smote(self, X_train, y_train):
-        n_neighbors = min(5, len(X_train) - 1)  # n_neighbors를 X_train의 샘플 수보다 작게 설정
+        class_counts = Counter(y_train)
+        min_samples = min(class_counts.values())
+
+        n_neighbors = min(5, min_samples - 1) if min_samples > 1 else 1
+
         smote = SMOTE(k_neighbors=n_neighbors)
         X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
         return X_resampled, y_resampled

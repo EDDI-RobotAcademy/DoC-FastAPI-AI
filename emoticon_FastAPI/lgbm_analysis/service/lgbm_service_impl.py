@@ -31,12 +31,8 @@ class LgbmAnalysisServiceImpl(LgbmAnalysisService):
                 X_scaled = self.__lgbmAnalysisRepository.featureScale(X)
                 X_train, X_test, y_train, y_test = self.__lgbmAnalysisRepository.trainTestSplit(X_scaled, y)
 
-                if filtered_df.shape[0] < 100:
-                    X_train_smote, y_train_smote = X_train, y_train
-
-                elif filtered_df['target'].nunique() == 3:
-                    X_train_smote, y_train_smote = self.__lgbmAnalysisRepository.smote(X_train, y_train)
-
+                if filtered_df['target'].nunique() == 3 and filtered_df['target'].value_counts().min() > 1:
+                    X_train_smote, y_train_smote =  self.__lgbmAnalysisRepository.smote(X_train, y_train)
                 else:
                     X_train_smote, y_train_smote = X_train, y_train
 
