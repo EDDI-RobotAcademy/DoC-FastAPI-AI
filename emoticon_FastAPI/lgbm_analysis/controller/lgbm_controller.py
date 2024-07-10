@@ -35,5 +35,9 @@ async def lgbmPredict(request: PredictRequestForm,
     predictedCategory, probability = await lgbmAnalysisService.lgbmPredict(age=request.age, gender=request.gender)
     probability = probability.tolist()
     recommendIds = lgbmAnalysisService.getRecommendProducts(category=predictedCategory, k=4)
+    visualData = lgbmAnalysisService.getVisualData()
+    # ages=visualData['age'].to_json(orient='values')
+    genders=visualData['gender'].to_json(orient='values')
+    targets = visualData['target'].to_json(orient='values')
+    return JSONResponse(content={"prediction": predictedCategory, 'probability': probability, "recommendProductIdList": recommendIds,'genders':genders,'targets':targets}, status_code=status.HTTP_200_OK)
 
-    return JSONResponse(content={"prediction": predictedCategory, 'probability': probability, "recommendProductIdList": recommendIds}, status_code=status.HTTP_200_OK)
